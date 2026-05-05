@@ -1,0 +1,57 @@
+name: Deploy Frontend to Vercel
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "quickhire AI mode/**"
+      - ".github/workflows/deploy-frontend.yml"
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - "quickhire AI mode/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: "./quickhire AI mode"
+          vercel-args: '--prod'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+      - name: Deploy Preview to Vercel (PR)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: "./quickhire AI mode"
+        if: github.event_name == 'pull_request'
+
+      - name: Comment PR with deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 Preview deployment ready!\n\nVercel will generate a preview URL shortly. Check the Deployments tab.'
+            })

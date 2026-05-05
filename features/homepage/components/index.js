@@ -1,0 +1,13 @@
+export { default as HeroSection } from './HeroSection';
+export { default as ClientLogos } from './ClientLogos';
+export { default as CarouselSection } from './CarouselSection';
+export { default as WhyQuickSection } from './WhyQuickSection';
+export { default as BookResourceSection } from './BookResourceSection';
+export { default as VibeCoding } from './VibeCoding';
+export { default as HowHireWork } from './HowHireWork';
+export { default as HireWithConfidence } from './HireWithConfidence';
+export { default as WeDeploy } from './WeDeploy';
+export { default as ClientSection } from './ClientSection';
+export { default as TechStack } from './TechStack';
+export { default as LetAnswer } from './LetAnswer';
+export { default as HowItWorksFaq } from './HowItWorksFaq';

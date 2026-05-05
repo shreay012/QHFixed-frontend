@@ -1,0 +1,383 @@
+@import "tailwindcss";
+
+/* Custom CSS variables from the original project */
+:root {
+  /* QuickHire brand colors */
+  --quickhire-green: #45A735;
+  --quickhire-green-dark: #26472B;
+  --quickhire-green-light: #78EB54;
+  --quickhire-green-light-second: #4FA735;
+  /* --section-title-green: #5eae51; */
+  --section-title-green: #3fa92d;
+  
+  /* Card colors */
+  --card-bg: #45a7350d;
+  --card-bg-hover: #44a7355f;
+  
+  /* Text colors */
+  --text-primary: #484848;
+  --text-secondary: #636363;
+  --text-tertiary:#D9D9D9;
+  
+  --text-muted: #909090;
+  --dark-text-primary: #000000;
+  --dark--text-secondary:#242424;
+  
+  /* Background colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7f5;
+  --bg-tertiary: #F2F9F1;
+
+  /* font size  */
+  --font-size-35: 35px;
+  --font-size-22: 22px;
+  --font-size-24: 24px;
+  --font-size-20: 20px;
+  --font-size-16 : 16px;
+  --font-size-18 : 18px;
+  --font-size-14 : 14px;
+   --font-size-12 : 12px;
+
+  /* fontWeight */
+  --font-weight-700: 700;
+  --font-weight-600: 600;
+   --font-weight-500: 500;
+  --font-weight-400: 400;
+
+}
+
+/* Base styles */
+body {
+  font-family: 'Open Sauce One Regular', sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+
+
+/* Custom typography utilities */
+.font-size-40 {
+  font-size: 40px !important;
+}
+
+.font-weight-700 {
+  font-weight: 700 !important;
+}
+
+/* Responsive font size 40 for desktop only */
+@media (min-width: 768px) {
+  .md\:font-size-40 {
+    font-size: 40px !important;
+  }
+}
+
+/* Text animation for hero section */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.text-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Hero text change animations */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+/* Custom card styles from original project */
+.card-primary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-radius: 1rem;
+  padding: 0.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  background-color: var(--card-bg);
+}
+
+.card-primary:hover {
+  background-color: var(--card-bg-hover);
+}
+
+.card-primary-before {
+  position: relative;
+}
+
+.card-primary-before::before {
+  content: '';
+  position: absolute;
+  bottom: -0.375rem;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 0.1875rem;
+  background-color: rgb(22 163 42);
+  width: 0;
+  border-radius: 1rem;
+  display: block;
+  transition: all 0.3s ease-out;
+  opacity: 0;
+}
+
+.card-primary-before:hover::before {
+  opacity: 1;
+  width: 5rem;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* MUI + Tailwind conflict resolution */
+.MuiBox-root {
+  box-sizing: border-box;
+}
+
+/* Ensure consistent spacing */
+* {
+  box-sizing: border-box;
+}
+
+.smaterbg {
+    display: flex;
+    justify-content: right;
+    background: linear-gradient(to right, #26472b 0%, #26472c 100%);
+    
+
+}
+
+.smaterbg img.object-cover.object-right {
+    position: inherit !important;
+    
+    width: 70% !important;
+}
+
+.readybg {
+    position: absolute;
+    top: 0px;
+        padding-left: 30px;
+    padding-right: 0px;
+}
+@media (max-width: 640px) {
+  .smaterbg {
+   
+    justify-content: center;
+    padding: 30px 0 320px;
+  }
+ 
+  .readybg{
+      padding-left: 0px;
+      text-align: center;
+          top: 60px;
+  }
+  
+}
+/* Font face declarations - Exact names from original style.css */
+@font-face {
+  font-family: 'Open Sauce One Light';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-Light.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One Medium';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-Medium.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One SemiBold';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-SemiBold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One Bold';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-Bold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One ExtraBold';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-ExtraBold.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce One Italic';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceOne-Italic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce Two Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceTwo-Regular.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Open Sauce Sans Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: url('/fonts/open-sauce-one-webfont (1)/OpenSauceSans-Regular.woff') format('woff');
+}
+
+.swiper-slide {
+  transition: all 0.5s ease-in-out;
+}
+
+.swiper-slide-active {
+  transform: scale(1.8);
+  z-index: 10;
+  padding: 10px;
+}
+
+.swiper-slide-active > div {
+  border-radius: 20px !important;
+  transition: border-radius 0.5s ease-in-out;
+}
+
+.swiper-slide-active img {
+  width: 56px !important;
+  height: 56px !important;
+  transition: all 0.5s ease-in-out;
+  border-radius: 16px;
+}
+
+
+
+
+/* Custom scrollbar styling - Hidden but functional */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+/* Firefox scrollbar */
+.custom-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.terms-page {
+  overflow-y: auto;
+  max-height: 100vh;
+}
+
+/* ─── RTL support ─────────────────────────────────────────────────────────── */
+
+/**
+ * 1. Arabic body font — system stack preferred; Open Sauce One (Latin-only)
+ *    falls back gracefully for Arabic characters.
+ */
+[dir="rtl"] body {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Cairo', Arial, sans-serif;
+}
+
+/**
+ * 2. Hero section — the `.readybg` rule uses hardcoded `padding-left`/`padding-right`.
+ *    Flip to logical equivalents in RTL so the hero text appears on the correct side.
+ */
+[dir="rtl"] .readybg {
+  padding-inline-start: 0;
+  padding-inline-end: 30px;
+  text-align: end;
+}
+
+@media (max-width: 640px) {
+  [dir="rtl"] .readybg {
+    padding-inline-end: 0;
+    text-align: center;
+  }
+}
+
+/**
+ * 3. Smart background strip — mirrors the background gradient for RTL markets
+ *    so the image/illustration stays on the correct (inline-end) side.
+ */
+[dir="rtl"] .smaterbg {
+  justify-content: flex-start;
+  background: linear-gradient(to left, #26472b 0%, #26472c 100%);
+}
+
+/**
+ * 4. MUI Tooltip — ensure tooltips use text-align: start in RTL.
+ */
+[dir="rtl"] .MuiTooltip-tooltip {
+  text-align: right;
+}
+
+/**
+ * 5. Prose content (legal docs in LegalAcceptanceProvider modal) — inherit
+ *    document direction so Arabic legal text renders correctly.
+ */
+[dir="rtl"] .prose {
+  direction: rtl;
+  text-align: start;
+}
+
+/**
+ * 6. Fix Tailwind animate-in slide utilities for RTL — the default
+ *    `slide-in-from-top-*` does not need changes; only horizontal slides do.
+ *    These classes are used in CountrySwitcher & LocaleCurrencySwitcher dropdowns.
+ *    The dropdowns are already anchored with `end-0` so no transform override needed.
+ */
+
