@@ -31,6 +31,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { staffAuth } from '@/lib/axios/staffApi';
 import GlobalSearch from './GlobalSearch';
+import CountryBadge from './CountryBadge';
+import CountrySelector from './CountrySelector';
 
 const ROLE_META = {
   admin:    { label: 'Admin',       tag: 'Admin Console' },
@@ -147,10 +149,16 @@ export default function StaffShell({ role, allowedRoles, homeHref, links, childr
   // Group links by section so each [{ type:'section', label }] header
   // can collapse/expand the sub-links beneath it. The user's preferred
   // open/closed state is kept in collapsedSections (default: open).
+  // Filters out super_admin-only links for non-super_admin viewers.
   const linkGroups = useMemo(() => {
+    const isSuperAdmin = user?.role === 'super_admin';
+    const visible = (links || []).filter((l) => {
+      if (l.superAdminOnly && !isSuperAdmin) return false;
+      return true;
+    });
     const groups = [];
     let current = { label: null, items: [] };
-    for (const l of links || []) {
+    for (const l of visible) {
       if (l.type === 'section') {
         if (current.items.length || current.label) groups.push(current);
         current = { label: l.label, items: [] };
@@ -159,8 +167,9 @@ export default function StaffShell({ role, allowedRoles, homeHref, links, childr
       }
     }
     if (current.items.length || current.label) groups.push(current);
-    return groups;
-  }, [links]);
+    // Drop empty sections (e.g. an admin-only section with all links filtered).
+    return groups.filter((g) => g.items.length > 0);
+  }, [links, user]);
 
   if (!ready) {
     return (
@@ -331,6 +340,10 @@ export default function StaffShell({ role, allowedRoles, homeHref, links, childr
           </nav>
 
           <div className="flex items-center gap-3">
+            {/* Country badge for country_admin / country selector for super_admin.
+                Both render nothing for other roles, so safe to keep both mounted. */}
+            <CountryBadge />
+            <CountrySelector />
             {role === 'admin' && <GlobalSearch />}
 
             <button

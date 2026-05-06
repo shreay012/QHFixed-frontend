@@ -7,11 +7,19 @@ import Link from 'next/link';
 import staffApi, { staffAuth } from '@/lib/axios/staffApi';
 
 const ROLES = [
-  { id: 'admin', label: 'Admin', mobile: '9000000000' },
-  { id: 'pm', label: 'Project Manager', mobile: '9000000001' },
-  { id: 'resource', label: 'Resource', mobile: '9000000002' },
+  { id: 'super_admin',   label: 'Super Admin',     mobile: '9000000000' },
+  { id: 'country_admin', label: 'Country Admin',   mobile: '9000000010' },
+  { id: 'admin',         label: 'Admin (legacy)',   mobile: '9000000000' },
+  { id: 'pm',            label: 'Project Manager', mobile: '9000000001' },
+  { id: 'resource',      label: 'Resource',         mobile: '9000000002' },
 ];
-const ROLE_HOME = { admin: '/admin', pm: '/pm', resource: '/resource' };
+const ROLE_HOME = {
+  super_admin:   '/admin',
+  country_admin: '/admin',
+  admin:         '/admin',
+  pm:            '/pm',
+  resource:      '/resource',
+};
 
 function StaffLoginInner() {
   const router = useRouter();
@@ -65,7 +73,10 @@ function StaffLoginInner() {
       const token = data.token;
       const user = data.user || { mobile, role };
       if (!token) throw new Error('No token in response');
-      user.role = role;
+      // Trust backend's role/country (it knows the canonical record). Falls
+      // back to the form selections only when the API didn't return them.
+      user.role = user.role || role;
+      if (data.user?.country !== undefined) user.country = data.user.country;
       staffAuth.setSession({ token, user });
       // Notify SocketProvider so it connects with the new staff session
       // (storage events only fire across tabs, so dispatch in-tab too).

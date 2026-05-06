@@ -266,6 +266,19 @@ const links = [
   // ── PLATFORM ────────────────────────────────────────────────────────────
   { type: 'section', label: 'Platform' },
   {
+    href: '/admin/country-admins',
+    label: 'Country Admins',
+    superAdminOnly: true,
+    icon: (
+      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx={9} cy={7} r={4} />
+        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+        <path d="M16 3.13a4 4 0 010 7.75" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/countries',
     label: 'Countries',
     icon: (
@@ -358,5 +371,18 @@ const links = [
 ];
 
 export default function AdminLayout({ children }) {
-  return <StaffShell role="admin" links={links}>{children}</StaffShell>;
+  // The admin shell is now home to multiple staff roles in the multi-country
+  // hierarchy: super_admin sees everything, country_admin sees their country
+  // only, and the legacy 'admin' / sub-roles continue to work unchanged.
+  // Backend countryScopeMiddleware enforces what each role can read/write —
+  // the UI just shows the same nav and lets the API filter results.
+  return (
+    <StaffShell
+      role="admin"
+      allowedRoles={['super_admin', 'country_admin', 'admin', 'ops', 'finance', 'support', 'growth', 'viewer']}
+      links={links}
+    >
+      {children}
+    </StaffShell>
+  );
 }
