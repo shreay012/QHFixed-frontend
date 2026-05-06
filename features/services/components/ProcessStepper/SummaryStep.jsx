@@ -312,13 +312,28 @@ const SummaryStep = () => {
         description: "Service Booking Payment",
         order_id: paymentData.razorpayOrderId,
         handler: async (response) => {
-          // Razorpay generates payment_id only AFTER the user pays — read
-          // it from the handler response (not from the create-order data,
-          // which is null at this point) so we don't hit /status/undefined.
-          const paidId = response?.razorpay_payment_id || paymentData.orderId;
+          // CRITICAL: call /payments/verify with the 3 fields Razorpay
+          // returns. This is what triggers the server-side signature check
+          // AND the status='paid' update. Without it the payment record
+          // stays in 'created' state and the booking never moves to
+          // 'confirmed' / triggers PM auto-assignment.
+          // Falls back to a status read if verify-fields are absent
+          // (defensive, shouldn't happen in practice).
           try {
-            if (paidId) await paymentService.getPaymentStatus(paidId);
-          } catch {}
+            if (response?.razorpay_signature) {
+              await paymentService.verifyPayment({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id:   response.razorpay_order_id,
+                razorpay_signature:  response.razorpay_signature,
+              });
+            } else if (response?.razorpay_payment_id) {
+              await paymentService.getPaymentStatus(response.razorpay_payment_id);
+            }
+          } catch (e) {
+            console.error('Payment verification failed:', e);
+            // Don't block the UX — show success page; admin can reconcile
+            // via the webhook fallback or manual confirmation.
+          }
           localStorage.removeItem("_current_job_id");
           localStorage.removeItem("_pricing_data");
           router.push(`/payment-success?jobId=${resolvedJobId}`);
@@ -525,13 +540,20 @@ const SummaryStep = () => {
           console.log("💰 Payment successful:", response);
 
           try {
-            // Razorpay payment_id only exists after the user pays —
-            // read it from the handler response, not from the original
-            // create-order payload (which is null pre-payment).
-            const paidId = response?.razorpay_payment_id || paymentData.orderId;
-            const statusResponse = paidId
-              ? await paymentService.getPaymentStatus(paidId)
-              : { data: null };
+            // Verify signature with backend → this updates the payment
+            // record to status='paid' AND triggers booking confirmation +
+            // PM auto-assignment. Just calling /status (read-only) was a
+            // bug — it never marked the payment paid on the server.
+            let statusResponse = { data: null };
+            if (response?.razorpay_signature) {
+              statusResponse = await paymentService.verifyPayment({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id:   response.razorpay_order_id,
+                razorpay_signature:  response.razorpay_signature,
+              });
+            } else if (response?.razorpay_payment_id) {
+              statusResponse = await paymentService.getPaymentStatus(response.razorpay_payment_id);
+            }
             console.log("📊 Payment status:", statusResponse.data);
 
             // Clear payment data from localStorage
