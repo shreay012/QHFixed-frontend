@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { CheckCircle } from '@mui/icons-material';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useSiteVideo } from '@/lib/hooks/useSiteVideo';
 
 export default function BookResourceClient() {
   const t = useTranslations('homepage.bookResource');
   const [tabIndex, setTabIndex] = useState(0);
+  const videoUrl = useSiteVideo('how-we-hire');
 
   const tabContent = [
     {
-      video: "/videos/howWeHire.mp4",
+      video: videoUrl,
       title: t("tab1Title"),
       desc: t("tab1Desc"),
       available: t("availableHours", { hours: t("tab1Available") }),
@@ -26,7 +28,7 @@ export default function BookResourceClient() {
       ],
     },
     {
-      video: "/videos/howWeHire.mp4",
+      video: videoUrl,
       title: t("tab2Title"),
       desc: t("tab2Desc"),
       available: t("availableHours", { hours: t("tab2Available") }),
@@ -39,7 +41,7 @@ export default function BookResourceClient() {
       ],
     },
     {
-      video: "/videos/howWeHire.mp4",
+      video: videoUrl,
       title: t("tab3Title"),
       desc: t("tab3Desc"),
       available: t("availableHours", { hours: t("tab3Available") }),

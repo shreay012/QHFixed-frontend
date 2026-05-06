@@ -6,11 +6,13 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import { useTranslations } from "next-intl";
 import { ButtonPrimaryhowitwork } from "@/components/ui";
+import { useSiteVideo } from "@/lib/hooks/useSiteVideo";
 
 export default function HowQuickHireWorks({ hideVideo }) {
   const t = useTranslations("howVideo");
   const tHow = useTranslations("homepage.howItWorks");
   const tCommon = useTranslations("common");
+  const videoUrl = useSiteVideo("how-we-hire");
   const steps = [
     { number: 1, title: tHow("step1Title"), description: tHow("step1Desc") },
     { number: 2, title: tHow("step2Title"), description: tHow("step2Desc") },
@@ -102,7 +104,7 @@ export default function HowQuickHireWorks({ hideVideo }) {
             <video
               ref={videoRef}
               className="w-full h-full object-cover"
-              src="/videos/howWeHire.mp4"
+              src={videoUrl}
               autoPlay
               loop
               muted

@@ -8,10 +8,12 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useCmsContent } from "@/lib/hooks/useCmsContent";
 import { useCmsTranslate } from "@/lib/i18n/useCmsTranslate";
+import { useSiteVideo } from "@/lib/hooks/useSiteVideo";
 
 const ClientSection = () => {
   const t = useTranslations("spotlights");
   const tCms = useCmsTranslate();
+  const videoUrl = useSiteVideo("how-we-hire");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [direction, setDirection] = useState("next");
@@ -247,7 +249,7 @@ const ClientSection = () => {
                   playsInline
                 >
                   <source
-                    src="/videos/howWeHire.mp4"
+                    src={videoUrl}
                     type="video/mp4"
                   />
                 </video>
