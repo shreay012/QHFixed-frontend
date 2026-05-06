@@ -5,6 +5,7 @@ import { CheckCircle } from '@mui/icons-material';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useSiteVideo } from '@/lib/hooks/useSiteVideo';
+import SmartVideo from '@/components/ui/SmartVideo';
 
 export default function BookResourceClient() {
   const t = useTranslations('homepage.bookResource');
@@ -72,7 +73,7 @@ export default function BookResourceClient() {
           {/* Left Card - Expert Profile */}
           <div className="rounded-2xl p-6 shadow-xl flex flex-col md:flex-row gap-6 bg-[#26472B]">
             <div className="rounded-xl overflow-hidden relative shrink-0 w-full md:w-70">
-              <video
+              <SmartVideo
                 src={currentTab.video}
                 autoPlay
                 loop

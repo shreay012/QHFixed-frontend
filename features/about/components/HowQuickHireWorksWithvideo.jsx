@@ -7,12 +7,15 @@ import PauseIcon from "@mui/icons-material/Pause";
 import { useTranslations } from "next-intl";
 import { ButtonPrimaryhowitwork } from "@/components/ui";
 import { useSiteVideo } from "@/lib/hooks/useSiteVideo";
+import SmartVideo from "@/components/ui/SmartVideo";
+import { isEmbedded } from "@/lib/utils/videoUrl";
 
 export default function HowQuickHireWorks({ hideVideo }) {
   const t = useTranslations("howVideo");
   const tHow = useTranslations("homepage.howItWorks");
   const tCommon = useTranslations("common");
   const videoUrl = useSiteVideo("how-we-hire");
+  const embedded = isEmbedded(videoUrl);
   const steps = [
     { number: 1, title: tHow("step1Title"), description: tHow("step1Desc") },
     { number: 2, title: tHow("step2Title"), description: tHow("step2Desc") },
@@ -101,7 +104,7 @@ export default function HowQuickHireWorks({ hideVideo }) {
               position: "relative",
             }}
           >
-            <video
+            <SmartVideo
               ref={videoRef}
               className="w-full h-full object-cover"
               src={videoUrl}
@@ -109,17 +112,13 @@ export default function HowQuickHireWorks({ hideVideo }) {
               loop
               muted
               playsInline
-              preload="metadata"
-              onClick={togglePlayPause}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
             />
 
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
 
             {/* Sound indicator - show when muted */}
-            {isMuted && (
+            {isMuted && !embedded && (
               <div
                 className="absolute top-4 right-4 bg-black/60 text-white px-3 py-2 rounded-full text-sm flex items-center gap-2 cursor-pointer hover:bg-black/80 transition-colors z-10"
                 onClick={handleUnmute}
@@ -136,7 +135,7 @@ export default function HowQuickHireWorks({ hideVideo }) {
             )}
 
             {/* Custom Play/Pause Button - Only show on hover */}
-            {isHovering && (
+            {isHovering && !embedded && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <IconButton
                   onClick={togglePlayPause}

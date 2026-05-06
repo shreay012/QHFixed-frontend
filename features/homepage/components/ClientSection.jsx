@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { useCmsContent } from "@/lib/hooks/useCmsContent";
 import { useCmsTranslate } from "@/lib/i18n/useCmsTranslate";
 import { useSiteVideo } from "@/lib/hooks/useSiteVideo";
+import SmartVideo from "@/components/ui/SmartVideo";
 
 const ClientSection = () => {
   const t = useTranslations("spotlights");
@@ -240,19 +241,15 @@ const ClientSection = () => {
                 onMouseEnter={() => setIsPaused(true)}
                 onMouseLeave={() => setIsPaused(false)}
               >
-                {/* Background Video */}
-                <video
+                {/* Background Video — supports YouTube/Vimeo/mp4 via SmartVideo */}
+                <SmartVideo
                   className="absolute inset-0 w-full h-full object-cover"
+                  src={videoUrl}
                   autoPlay
                   loop
                   muted
                   playsInline
-                >
-                  <source
-                    src={videoUrl}
-                    type="video/mp4"
-                  />
-                </video>
+                />
               </div>
             </div>
           </div>
