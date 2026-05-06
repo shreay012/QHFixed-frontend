@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSiteVideo } from '@/lib/hooks/useSiteVideo';
 
 const VideoSectionV3 = () => {
   const tCommon = useTranslations('common');
@@ -9,6 +10,7 @@ const VideoSectionV3 = () => {
   const [isHovering, setIsHovering] = useState(false);
   const [isMuted, setIsMuted] = useState(true); // Start muted for autoplay
   const videoRef = useRef(null);
+  const videoUrl = useSiteVideo('intro');
 
   const togglePlayPause = () => {
     if (videoRef.current) {
@@ -51,7 +53,7 @@ const VideoSectionV3 = () => {
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
-            src="https://quickhire.services/backend/backend/videos/Quick-Hire-new-intro-video.mp4"
+            src={videoUrl}
             autoPlay
             loop
             muted
