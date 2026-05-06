@@ -46,6 +46,20 @@ const SCHEMAS = {
     { key: 'title',       label: 'Title',       type: 'text',     required: true },
     { key: 'description', label: 'Description', type: 'textarea', required: true },
   ],
+  // Site videos with per-country URL overrides. Frontend's useSiteVideo()
+  // hook prefers `urls.<country>` over the default `url`.
+  videos: [
+    { key: 'id',          label: 'Video ID (slug)',     type: 'text', required: true, placeholder: 'how-we-hire' },
+    { key: 'title',       label: 'Title',                type: 'text', required: true },
+    { key: 'description', label: 'Description',          type: 'textarea' },
+    { key: 'url',         label: 'Default URL',          type: 'text', required: true, placeholder: 'https://cdn.com/video.mp4 or /videos/howWeHire.mp4' },
+    { key: 'poster',      label: 'Poster Image URL',     type: 'text', placeholder: 'https://cdn.com/poster.jpg' },
+    { key: 'urls.IN',     label: '🇮🇳 India URL (override default)',     type: 'text', placeholder: 'leave empty to use default' },
+    { key: 'urls.AE',     label: '🇦🇪 UAE URL (override default)',       type: 'text', placeholder: 'leave empty to use default' },
+    { key: 'urls.DE',     label: '🇩🇪 Germany URL (override default)',   type: 'text', placeholder: 'leave empty to use default' },
+    { key: 'urls.AU',     label: '🇦🇺 Australia URL (override default)', type: 'text', placeholder: 'leave empty to use default' },
+    { key: 'urls.US',     label: '🇺🇸 USA URL (override default)',       type: 'text', placeholder: 'leave empty to use default' },
+  ],
 };
 
 function inferSchema(items) {
@@ -83,10 +97,30 @@ function fmtTime(iso) {
 }
 
 /* ── Item Editor Modal ──────────────────────────────────────────────────────── */
+// Get value at dot-notation path: getPath({a:{b:1}}, 'a.b') === 1
+function getPath(obj, path) {
+  if (!path.includes('.')) return obj?.[path];
+  return path.split('.').reduce((acc, k) => (acc == null ? acc : acc[k]), obj);
+}
+// Set value at dot-notation path immutably; returns new object.
+function setPath(obj, path, value) {
+  if (!path.includes('.')) return { ...obj, [path]: value };
+  const keys = path.split('.');
+  const out = Array.isArray(obj) ? [...obj] : { ...obj };
+  let cursor = out;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i];
+    cursor[k] = (cursor[k] && typeof cursor[k] === 'object' && !Array.isArray(cursor[k])) ? { ...cursor[k] } : {};
+    cursor = cursor[k];
+  }
+  cursor[keys[keys.length - 1]] = value;
+  return out;
+}
+
 function ItemEditor({ schema, item, onSave, onCancel }) {
   const [form, setForm] = useState({ ...item });
-  const set = (k, v) => setForm((prev) => ({ ...prev, [k]: v }));
-  const valid = schema.filter((f) => f.required).every((f) => String(form[f.key] ?? '').trim());
+  const set = (k, v) => setForm((prev) => setPath(prev, k, v));
+  const valid = schema.filter((f) => f.required).every((f) => String(getPath(form, f.key) ?? '').trim());
 
   return (
     <div
@@ -108,8 +142,9 @@ function ItemEditor({ schema, item, onSave, onCancel }) {
               </label>
               {f.type === 'textarea' ? (
                 <textarea
-                  value={form[f.key] ?? ''}
+                  value={getPath(form, f.key) ?? ''}
                   onChange={(e) => set(f.key, e.target.value)}
+                  placeholder={f.placeholder}
                   rows={4}
                   className="w-full border border-[#E5F1E2] rounded-lg px-3 py-2.5 text-sm font-open-sauce text-[#242424] bg-white focus:ring-2 focus:ring-[#45A735]/30 focus:border-[#45A735] focus:outline-none resize-none transition-colors"
                 />
@@ -118,8 +153,9 @@ function ItemEditor({ schema, item, onSave, onCancel }) {
                   type={f.type || 'text'}
                   min={f.min}
                   max={f.max}
-                  value={form[f.key] ?? ''}
+                  value={getPath(form, f.key) ?? ''}
                   onChange={(e) => set(f.key, e.target.value)}
+                  placeholder={f.placeholder}
                   className="w-full border border-[#E5F1E2] rounded-lg px-3 py-2.5 text-sm font-open-sauce text-[#242424] bg-white focus:ring-2 focus:ring-[#45A735]/30 focus:border-[#45A735] focus:outline-none transition-colors"
                 />
               )}
