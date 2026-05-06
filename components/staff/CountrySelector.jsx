@@ -48,8 +48,15 @@ export default function CountrySelector() {
       params.delete('asCountry');
     }
     const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
-    router.refresh(); // re-fetch server data with new scope
+    // Hard reload so every page-level useEffect / loader re-runs against
+    // the new scope. Soft router.push + router.refresh() doesn't reliably
+    // re-trigger client-side data fetches that depend on search params,
+    // and the staffApi interceptor reads window.location.search directly.
+    if (typeof window !== 'undefined') {
+      window.location.href = qs ? `${pathname}?${qs}` : pathname;
+    } else {
+      router.push(qs ? `${pathname}?${qs}` : pathname);
+    }
   };
 
   const sel = COUNTRIES.find((c) => c.code === current) || COUNTRIES[0];
