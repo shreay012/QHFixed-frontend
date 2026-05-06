@@ -266,6 +266,18 @@ const links = [
   // ── PLATFORM ────────────────────────────────────────────────────────────
   { type: 'section', label: 'Platform' },
   {
+    href: '/admin/super-admins',
+    label: 'Super Admins',
+    superAdminOnly: true,
+    icon: (
+      // crown — global / top-level admin
+      <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 7l4 4 5-7 5 7 4-4-2 11H5L3 7z" />
+        <path d="M5 18h14" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/country-admins',
     label: 'Country Admins',
     superAdminOnly: true,
