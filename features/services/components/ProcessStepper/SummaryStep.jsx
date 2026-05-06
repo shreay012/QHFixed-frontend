@@ -302,14 +302,22 @@ const SummaryStep = () => {
     return new Promise((resolve, reject) => {
       const options = {
         key: paymentData.keyId,
-        amount: paymentData.amount * 100,
+        // Backend already returns `amount` in the smallest currency unit
+        // (paise for INR — i.e. already × 100). Multiplying again caused
+        // a server/client amount mismatch and Razorpay rejected the
+        // checkout with 400 Bad Request.
+        amount: paymentData.amount,
         currency: paymentData.currency,
         name: "QuickHire",
         description: "Service Booking Payment",
         order_id: paymentData.razorpayOrderId,
         handler: async (response) => {
+          // Razorpay generates payment_id only AFTER the user pays — read
+          // it from the handler response (not from the create-order data,
+          // which is null at this point) so we don't hit /status/undefined.
+          const paidId = response?.razorpay_payment_id || paymentData.orderId;
           try {
-            await paymentService.getPaymentStatus(paymentData.paymentId);
+            if (paidId) await paymentService.getPaymentStatus(paidId);
           } catch {}
           localStorage.removeItem("_current_job_id");
           localStorage.removeItem("_pricing_data");
@@ -506,7 +514,8 @@ const SummaryStep = () => {
       // Configure Razorpay options
       const razorpayOptions = {
         key: paymentData.keyId,
-        amount: paymentData.amount * 100,
+        // Backend already returns amount in paise — don't × 100 again.
+        amount: paymentData.amount,
         currency: paymentData.currency,
         name: "QuickHire",
         description: "Service Booking Payment",
@@ -516,10 +525,13 @@ const SummaryStep = () => {
           console.log("💰 Payment successful:", response);
 
           try {
-            // Check payment status
-            const statusResponse = await paymentService.getPaymentStatus(
-              paymentData.paymentId,
-            );
+            // Razorpay payment_id only exists after the user pays —
+            // read it from the handler response, not from the original
+            // create-order payload (which is null pre-payment).
+            const paidId = response?.razorpay_payment_id || paymentData.orderId;
+            const statusResponse = paidId
+              ? await paymentService.getPaymentStatus(paidId)
+              : { data: null };
             console.log("📊 Payment status:", statusResponse.data);
 
             // Clear payment data from localStorage
