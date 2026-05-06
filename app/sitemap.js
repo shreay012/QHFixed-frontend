@@ -1,6 +1,19 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://qhfixed.vercel.app';
 
+// Safely parse a value to a Date — returns `now` on anything that isn't a
+// real date string. Without this, the build silently picks up empty objects
+// or invalid strings from upstream APIs and crashes Next.js sitemap export
+// with `RangeError: Invalid time value`.
+function safeDate(v) {
+  if (v instanceof Date && !Number.isNaN(v.getTime())) return v;
+  if (typeof v === 'string' && v) {
+    const d = new Date(v);
+    if (!Number.isNaN(d.getTime())) return d;
+  }
+  return new Date();
+}
+
 const STATIC_PAGES = [
   { path: '/',                          priority: 1.0,  changeFreq: 'daily' },
   { path: '/how-it-works',              priority: 0.9,  changeFreq: 'weekly' },
@@ -31,7 +44,7 @@ export default async function sitemap() {
           const id = s.slug || String(s._id);
           entries.push({
             url: `${SITE}/service-details/${id}`,
-            lastModified: s.updatedAt ? new Date(s.updatedAt) : new Date(),
+            lastModified: safeDate(s.updatedAt),
             changeFrequency: 'weekly',
             priority: 0.85,
           });
@@ -50,7 +63,7 @@ export default async function sitemap() {
         if (!p.slug) continue;
         entries.push({
           url: `${SITE}/industry-perspectives/${p.slug}`,
-          lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+          lastModified: safeDate(p.updatedAt),
           changeFrequency: 'weekly',
           priority: 0.7,
         });
